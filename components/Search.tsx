@@ -1,24 +1,5 @@
 import { useState } from "react";
 
-// const videos = [
-//   {
-//     videoId: "KtYJemz_pgo",
-//     channelTitle: "WeMaxit Football",
-//     image: "https://i.ytimg.com/vi/KtYJemz_pgo/default_live.jpg",
-//     channelId: "UCbwH2qDT9aciRLeRTQNSLPA",
-//     description:
-//       "Nigeria vs Mali Live Stream | Super Eagles International Friendly | Watchalong Join this channel to get access to perks: ...",
-//   },
-//   {
-//     videoId: "4tqtui_zcWk",
-//     channelTitle: "Làm Handmade Thật Vui",
-//     image: "https://i.ytimg.com/vi/4tqtui_zcWk/default.jpg",
-//     channelId: "UCZmaiRFLzaUmhy2sxRnm0Jw",
-//     description:
-//       "FIRST TAKE | Stephen A. on Giants GM John Mara fears Barkley will lead Eagles to dominate NFC East.",
-//   },
-// ];
-
 interface VideoResult {
   channelId: string;
   channelTitle: string;
@@ -26,32 +7,34 @@ interface VideoResult {
   publishTime: string;
   thumbnailUrl: string;
   videoId: string;
-  image: string;
 }
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [excludeChannels, setExcludeChannels] = useState("");
   const [searchResults, setSearchResults] = useState<VideoResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSearch = async () => {
-    const baseURL = "/api/search";
-    let endpoint = `${baseURL}?query=${encodeURIComponent(searchQuery)}`;
-
-    if (excludeChannels) {
-      const excludeParam = excludeChannels
-        .split(",")
-        .map((channel) => channel.trim())
-        .join(",");
-      endpoint += `&exclude=${encodeURIComponent(excludeParam)}`;
-    }
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch(endpoint);
-      const data = await response.json();
+      const response = await fetch(
+        `/api/search?query=${encodeURIComponent(
+          searchQuery
+        )}&exclude=${encodeURIComponent(excludeChannels)}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch");
+      const data: VideoResult[] = await response.json();
       setSearchResults(data);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setError("Failed to fetch data. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,9 +113,6 @@ export default function Search() {
             </form>
           </div>
         </div>
-        {/* ///////////////////////////////////////////////////// */}
-        {/* Conditionally Render section if results and display results */}
-        {/* ///////////////////////////////////////////////////// */}
         {searchResults && (
           <div className="rounded-xl mt-6 mb-6 overflow-hidden bg-white shadow-2xl sm:rounded-lg">
             <div className="px-4 py-6 sm:px-6">
@@ -145,11 +125,17 @@ export default function Search() {
                 <div key={index}>
                   <dl className="divide-y divide-gray-100">
                     <div className="ml-6 mt-3 mb-2 h-11 w-11 flex-shrink-0">
-                      <img
-                        className="h-11 w-11 rounded-md"
-                        src={video.image}
-                        alt=""
-                      />
+                      <a
+                        href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          className="h-11 w-11 rounded-md"
+                          src={video.thumbnailUrl}
+                          alt=""
+                        />
+                      </a>
                     </div>
                     <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-gray-900">
@@ -181,6 +167,14 @@ export default function Search() {
                       </dt>
                       <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                         {video.description}
+                      </dd>
+                    </div>
+                    <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-900">
+                        Publish Time
+                      </dt>
+                      <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        {video.publishTime}
                       </dd>
                     </div>
                   </dl>
