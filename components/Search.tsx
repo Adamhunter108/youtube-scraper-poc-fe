@@ -82,7 +82,7 @@ export default function Search() {
                       htmlFor="channelId"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Exclude Channel Name{" "}
+                      Exclude channels by name{" "}
                       <span className="text-gray-400 ml-1">(Optional)</span>
                     </label>
                     <div className="mt-2">
@@ -94,7 +94,7 @@ export default function Search() {
                           value={excludeChannels}
                           onChange={(e) => setExcludeChannels(e.target.value)}
                           className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                          placeholder="i.e.: LilWayneVevo, DrakeVevo"
+                          placeholder="i.e.: LilWayneVEVO, DrakeVEVO"
                         />
                       </div>
                     </div>
