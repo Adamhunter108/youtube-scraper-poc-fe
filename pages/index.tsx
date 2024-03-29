@@ -1,11 +1,13 @@
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import Password from "@/components/Password";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
     <main className={`${inter.className}`}>
+      <Password />
       <div className="">
         <div className="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
           <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl sm:rounded-3xl sm:px-16">
