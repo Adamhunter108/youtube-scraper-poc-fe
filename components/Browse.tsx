@@ -1,17 +1,41 @@
-const videos = [
-  {
-    videoId: "KtYJemz_pgo",
-    channelTitle: "WeMaxit Football",
-    image: "https://i.ytimg.com/vi/KtYJemz_pgo/default_live.jpg",
-  },
-  {
-    videoId: "4tqtui_zcWk",
-    channelTitle: "Làm Handmade Thật Vui",
-    image: "https://i.ytimg.com/vi/4tqtui_zcWk/default.jpg",
-  },
-];
+import { useEffect, useState } from "react";
+
+interface Video {
+  channelId: string;
+  channelTitle: string;
+  description: string;
+  publishTime: string;
+  thumbnailUrl: string;
+  videoId: string;
+}
 
 export default function Browse() {
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/browse");
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setVideos(data);
+      } catch (error) {
+        setError("Failed to fetch videos");
+        console.error("Error fetching videos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div className="mt-4 px-10">
       <div className="">
@@ -26,7 +50,7 @@ export default function Browse() {
               </p>
             </div>
 
-            <div className="bg-white rounded-xl shadow-2xl ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            <div className="bg-white rounded-xl shadow-2xl ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 mb-6">
               <div className="px-4 sm:px-6 lg:px-8">
                 <div className="my-8 flow-root">
                   <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -40,7 +64,7 @@ export default function Browse() {
                                   <div className="h-11 w-11 flex-shrink-0">
                                     <img
                                       className="h-11 w-11 rounded-md"
-                                      src={video.image}
+                                      src={video.thumbnailUrl}
                                       alt=""
                                     />
                                   </div>
