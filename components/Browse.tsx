@@ -33,6 +33,22 @@ export default function Browse() {
     fetchData();
   }, []);
 
+  const deleteVideo = async (videoId: any) => {
+    try {
+      const response = await fetch("/api/delete-video", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ videoId }),
+      });
+      if (!response.ok) throw new Error("Network response was not ok");
+      setVideos(videos.filter((video) => video.videoId !== videoId));
+    } catch (error) {
+      console.error("Error deleting video:", error);
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -96,7 +112,7 @@ export default function Browse() {
                               </td>
                               <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                                 <button
-                                  rel="noopener noreferrer"
+                                  onClick={() => deleteVideo(video.videoId)}
                                   className="rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                   Delete
