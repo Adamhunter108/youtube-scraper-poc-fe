@@ -12,7 +12,7 @@
 
 ## Live Deployment:
 
-[youtube-scraper-poc-fe.vercel.app](youtube-scraper-poc-fe.vercel.app)
+[youtube-scraper-poc-fe.vercel.app](https://youtube-scraper-poc-fe.vercel.app/)
 
 ## Run Locally
 
